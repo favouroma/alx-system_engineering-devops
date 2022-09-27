@@ -1,2 +1,2 @@
 #!/bin/bash
-cat /etc/passwd /etc/hosts
+echo $PATH | tr -s ":" "\n" | wc -l
