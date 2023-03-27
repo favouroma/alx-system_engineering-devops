@@ -1,26 +1,26 @@
 #!/usr/bin/env bash
-# A bash script that installs nginx on an ubuntu machine.
-# This scripts also configures the default webpage served to be "Hello World!"
-# When request url matches /redirect_me, it redirects to my youtube channel.
-# When a page/file not found in the document root is requested, the 404.html
-# page is served to the client as stated with the error_page directive.
+# sets up a new 404 error page
+sudo apt-get update
+sudo apt-get install -y nginx 
+echo "Hello World!" > index.html
+sudo mv index.html /var/www/html
 
-sudo apt-get update -y
 
-sudo apt-get install nginx -y
-
-echo "Hello World!" | sudo dd status=none of=/var/www/html/index.html
-
-echo "Ceci n'est pas une page" | sudo tee /var/www/html/404.html > /dev/null
-
-NEW_RULE="\\\n\tlocation /redirect_me {\n\t\t return 301 https://www.youtube.com/@sammykingx;\n\t}\n"
-
-sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.backup
-
-sudo sed -i "53i $NEW_RULE" /etc/nginx/sites-available/default
-
-NEW_RULE="\\\n\terror_page 404 /404.html;\n\n\tlocation = /404.html {\n\t\tinternal;\n\t}\n"
-
-sudo sed -i "53i $NEW_RULE" /etc/nginx/sites-available/default
-
-sudo service nginx reload
+echo "Ceci n'est pas une page" > 404.html
+sudo mv 404.html /var/www/html
+echo "server {
+   listen 80 default_server;
+   listen [::]:80 default_server;
+   
+   root /var/www/html;
+   index index.html;
+   location /redirect_me {
+      return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;
+   }
+   error_page 404 /404.html;
+   location = /404.html{
+      internal;
+   }
+}" > default
+sudo mv -f default /etc/nginx/sites-available/default
+sudo service nginx restart
