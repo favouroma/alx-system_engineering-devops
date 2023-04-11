@@ -8,8 +8,8 @@ brown='\e[0;33m'
 reset='\033[0m'
 file="$1"
 ip="$2"
-user="$3"
-key="$4"
+user="ubuntu"
+key="~/.ssh/id_rsa"
 
 if [ $# -eq 4 ]; then
 	scp -i "$key" -o StrictHostKeyChecking=no "$path"/"$file" "$user"@"$ip":/home/"$user"/
